@@ -15,6 +15,11 @@ const upload = multer({ dest: 'uploads/pose/' })
 app.post('/pose', upload.single('image'), function (req, res) {
     posenetUtils.predict(req.file.path).then(function (pose) {
         pose['input_filename'] = req.file.originalname
+        pose['keypoints'] = pose['keypoints'].reduce(function (dict, item) {
+            dict[item['part']] = [item['position']['x'], item['position']['y']]
+            return dict
+        }, {})
+        delete pose['score']
         fs.unlinkSync(req.file.path)
 	    res.send(JSON.stringify(pose))
     })
