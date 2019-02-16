@@ -6,6 +6,7 @@ const fs = require('fs')
 const multer = require('multer')
 const posenetUtils = require('./libs/posenet_utils')
 const path = require('path')
+const extractFrame = require('ffmpeg-extract-frame')
 
 app.get('/', function (req, res) {
     res.send('Hello World!')
@@ -14,6 +15,20 @@ app.get('/', function (req, res) {
 app.get('/catalog/:category', function (req, res) {
     var catalog = JSON.parse(fs.readFileSync('data/catalog.json', 'utf8'))
     res.send(JSON.stringify(catalog[req.params.category]))
+})
+
+app.get('/exercise/icon/:id', function (req, res) {
+    const tempFilename = 'uploads/screenshot-' + req.params.id + '.jpg'
+    const tempFilePath = path.join(__dirname, tempFilename) 
+    extractFrame({
+        input: 'data/demos/' + req.params.id + '.mp4',
+        output: tempFilename,
+        offset: 0
+    }).then(function() {
+        res.sendFile(tempFilePath, function () {
+            fs.unlinkSync(tempFilePath)
+        })
+    })
 })
 
 app.get('/exercise/video/:id', function (req, res) {
