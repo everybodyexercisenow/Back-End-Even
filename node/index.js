@@ -12,6 +12,11 @@ app.get('/', function (req, res) {
     res.send('Hello World!')
 })
 
+app.get('/catalog', function (req, res) {
+    var catalog = JSON.parse(fs.readFileSync('data/catalog.json', 'utf8'))
+    res.send(JSON.stringify(Object.keys(catalog)))
+})
+
 app.get('/catalog/:category', function (req, res) {
     var catalog = JSON.parse(fs.readFileSync('data/catalog.json', 'utf8'))
     res.send(JSON.stringify(catalog[req.params.category]))
@@ -25,9 +30,7 @@ app.get('/exercise/icon/:id', function (req, res) {
         output: tempFilename,
         offset: 0
     }).then(function() {
-        res.sendFile(tempFilePath, function () {
-            fs.unlinkSync(tempFilePath)
-        })
+        res.sendFile(tempFilePath)
     })
 })
 

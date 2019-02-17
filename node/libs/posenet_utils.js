@@ -46,7 +46,7 @@ module.exports = {
 
         const cropCoords = getCropCoords(width, height)
 
-        const canvas = createCanvas(cropCoords['sw'], cropCoords['sh'])
+        const canvas = createCanvas(inputImageSize, inputImageSize)
         const ctx = canvas.getContext('2d')
         
         const image = await loadImage(path)
@@ -59,7 +59,7 @@ module.exports = {
         }
 
         const pose = await net.estimateSinglePose(canvas, imageScaleFactor, flipHorizontal, outputStride)
-        
+
         return pose
     }
 }
